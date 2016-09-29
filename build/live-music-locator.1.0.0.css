@@ -1,0 +1,11 @@
+@import "normalize.css";
+html {
+  box-sizing: border-box;
+  background-color: #F5F5F5;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+/*# sourceMappingURL=live-music-locator.1.0.0.css.map */
