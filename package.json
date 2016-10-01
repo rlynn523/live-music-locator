@@ -28,15 +28,9 @@
     "build:css:minified": "npm run clean:css:minified && lessc --clean-css --source-map src/css/index.less build/$npm_package_name.$npm_package_version.min.css",
     "watch:css:minified": "npm run build:css:minified && chokidar 'src/css/**/*.(css|less)' -c 'npm run build:css:minified'",
     "clean:css:minified": "rm -f build/$npm_package_name.$npm_package_version.min.css build/$npm_package_name.$npm_package_version.min.css.map",
-    "build:js": "npm run build:js:unminified && npm run build:js:minified",
-    "watch:js": "npm run watch:js:unminified & npm run watch:js:minified",
-    "clean:js": "npm run clean:js:unminified && npm run clean:js:minified",
-    "build:js:unminified": "npm run clean:js:unminified && webpack",
-    "watch:js:unminified": "npm run build:js:unminified && webpack --watch",
-    "clean:js:unminified": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map",
-    "build:js:minified": "npm run clean:js:minified && webpack --minify",
-    "watch:js:minified": "npm run build:js:minified && webpack --watch --minify",
-    "clean:js:minified": "rm -f build/$npm_package_name.$npm_package_version.min.js build/$npm_package_name.$npm_package_version.min.js.map"
+    "build:js": "npm run clean:js && webpack",
+    "watch:js": "npm run build:js && webpack --watch",
+    "clean:js": "rm -f build/$npm_package_name.$npm_package_version.js build/$npm_package_name.$npm_package_version.js.map"
   },
   "babel": {
     "presets": [
@@ -47,6 +41,7 @@
   "author": "Ryan Lynn",
   "license": "ISC",
   "devDependencies": {
+    "babel": "^6.5.2",
     "babel-core": "^6.16.0",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
@@ -70,6 +65,8 @@
     "isomorphic-fetch": "^2.2.1",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
+    "react-gmaps": "^1.5.0",
+    "react-redux": "^4.4.5",
     "react-router": "^2.8.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0"
