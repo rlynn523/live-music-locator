@@ -1,11 +1,12 @@
 import actions from '../actions/events';
 import initialState from './initialstate';
+
 export default function EventsReducer (state = initialState, action) {
     switch(action.type) {
         case actions.FETCH_EVENTS_SUCCESS:
-        let events = state.events.concat(action);
+        console.log(action);
         let Events = Object.assign({}, state, {
-            events: events,
+            events: action
         });
         return Events;
     }

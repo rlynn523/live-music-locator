@@ -23094,9 +23094,9 @@
 	
 	    switch (action.type) {
 	        case _events2.default.FETCH_EVENTS_SUCCESS:
-	            var events = state.events.concat(action);
+	            console.log(action);
 	            var Events = Object.assign({}, state, {
-	                events: events
+	                events: action
 	            });
 	            return Events;
 	    }
@@ -23116,23 +23116,16 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
-	var fetchEventsSuccess = function fetchEventsSuccess(title, venue, venueUrl, url, image, lat, long, id) {
+	var fetchEventsSuccess = function fetchEventsSuccess(events) {
 	    return {
 	        type: FETCH_EVENTS_SUCCESS,
-	        title: title,
-	        venue: venue,
-	        venueUrl: venueUrl,
-	        url: url,
-	        image: image,
-	        lat: lat,
-	        long: long,
-	        id: id
+	        events: events
 	    };
 	};
-	var fetchEvents = function fetchEvents(title, venue, venueUrl, url, image, lat, long, id) {
+	var fetchEvents = function fetchEvents(events) {
 	    return function (dispatch) {
 	        var url = 'http://api.eventful.com/json/events/search?app_key=b9b48zPkWjgxW98J&c=music&l=pittsburgh&t=Today';
-	        return (0, _isomorphicFetch2.default)(url).then(function (response) {
+	        return (0, _isomorphicFetch2.default)(url, { mode: 'cors' }).then(function (response) {
 	            if (response.status < 200 || response.status >= 300) {
 	                var error = new Error(response.statusText);
 	                error.response = response;
@@ -23140,20 +23133,22 @@
 	            }
 	            return response.json();
 	        }).then(function (data) {
-	            var events = data.events.event;
+	            var eventArray = data.events.event;
 	            var i = void 0;
-	            for (i = 0; i < events.length; i++) {
-	                var event = events[i];
-	                var _title = event.title;
-	                var _venue = event.venue_name;
-	                var _venueUrl = event.venue_url;
-	                var _url = event.url;
-	                var _image = event.image.medium.url;
-	                var _lat = event.latitude;
-	                var _long = event.longitude;
-	                var _id = event.id;
-	                dispatch(fetchEventsSuccess(_title, _venue, _venueUrl, _url, _image, _lat, _long, _id));
+	            var events = [];
+	            for (i = 0; i < eventArray.length; i++) {
+	                var event = eventArray;
+	                events = events.concat({
+	                    title: event[i].title,
+	                    venue: event[i].venue_name,
+	                    venueUrl: event[i].venue_url,
+	                    site: event[i].url,
+	                    lat: event[i].latitude,
+	                    long: event[i].longitude,
+	                    id: event[i].id
+	                });
 	            }
+	            dispatch(fetchEventsSuccess(events));
 	        }).catch(function (error) {
 	            return dispatch(console.log(error));
 	        });
@@ -23669,22 +23664,24 @@
 	    _createClass(Search, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            this.props.dispatch(_events2.default.fetchEvents(this.props.title, this.props.venue, this.props.venueUrl, this.props.url, this.props.id));
+	            this.props.dispatch(_events2.default.fetchEvents(this.props.title, this.props.venue, this.props.venueUrl, this.props.sites, this.props.lat, this.props.long, this.props.id));
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var eventLists = this.props.eventLists.map(function (eventList) {
-	                return _react2.default.createElement(
-	                    'li',
-	                    { key: eventList.id },
-	                    eventList
-	                );
-	            });
 	            return _react2.default.createElement(
-	                'ul',
+	                'div',
 	                null,
-	                eventLists
+	                _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    this.props.title
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    this.props.venue
+	                )
 	            );
 	        }
 	    }]);
@@ -23694,7 +23691,12 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	    return {
-	        eventLists: state.events
+	        title: state.title,
+	        venue: state.venue,
+	        venueUrl: state.venueUrl,
+	        site: state.site,
+	        lat: state.lat,
+	        long: state.long
 	    };
 	};
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Search);

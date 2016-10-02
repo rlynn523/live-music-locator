@@ -5,23 +5,26 @@ import actions from '../actions/events';
 export class Search extends Component {
     componentDidMount() {
         this.props.dispatch(
-            actions.fetchEvents(this.props.title, this.props.venue, this.props.venueUrl, this.props.url, this.props.id)
+            actions.fetchEvents(this.props.title, this.props.venue, this.props.venueUrl, this.props.sites, this.props.lat, this.props.long, this.props.id)
         );
     }
     render() {
-        var eventLists = this.props.eventLists.map(function(eventList){
-             return <li key={eventList.id}>{eventList}</li>;
-        });
         return(
-            <ul>
-                {eventLists}
-            </ul>
+            <div>
+                <h2>{this.props.title}</h2>
+                <p>{this.props.venue}</p>
+            </div>
         );
     }
 }
 let mapStateToProps = function(state, props) {
     return {
-        eventLists: state.events
+        title: state.title,
+        venue: state.venue,
+        venueUrl: state.venueUrl,
+        site: state.site,
+        lat: state.lat,
+        long: state.long
     }
 }
 export default connect(mapStateToProps)(Search);

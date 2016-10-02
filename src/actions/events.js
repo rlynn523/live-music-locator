@@ -1,23 +1,16 @@
 import fetch from 'isomorphic-fetch';
 
 let FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS';
-let fetchEventsSuccess = function(title, venue, venueUrl, url, image, lat, long, id) {
+let fetchEventsSuccess = function(events) {
     return {
         type: FETCH_EVENTS_SUCCESS,
-        title: title,
-        venue: venue,
-        venueUrl: venueUrl,
-        url: url,
-        image: image,
-        lat: lat,
-        long: long,
-        id: id
+        events: events
     }
 }
-let fetchEvents = function(title, venue, venueUrl, url, image, lat, long, id) {
+let fetchEvents = function(events) {
     return function(dispatch) {
         let url = 'http://api.eventful.com/json/events/search?app_key=b9b48zPkWjgxW98J&c=music&l=pittsburgh&t=Today';
-        return fetch(url).then(function(response) {
+        return fetch(url, {mode: 'cors'}).then(function(response) {
             if (response.status < 200 || response.status >= 300) {
                 var error = new Error(response.statusText)
                 error.response = response
@@ -26,22 +19,24 @@ let fetchEvents = function(title, venue, venueUrl, url, image, lat, long, id) {
             return response.json();
         })
     .then(function(data) {
-        let events = data.events.event;
+        let eventArray = data.events.event;
         let i;
-        for(i = 0; i < events.length; i++) {
-            let event = events[i];
-            let title = event.title;
-            let venue = event.venue_name;
-            let venueUrl = event.venue_url;
-            let url = event.url;
-            let image = event.image.medium.url
-            let lat = event.latitude;
-            let long = event.longitude;
-            let id = event.id;
-            dispatch(
-                fetchEventsSuccess(title, venue, venueUrl, url, image, lat, long, id)
-            )
+        let events = [];
+        for(i = 0; i < eventArray.length; i++) {
+            let event = eventArray;
+            events = events.concat({
+                title: event[i].title,
+                venue: event[i].venue_name,
+                venueUrl: event[i].venue_url,
+                site: event[i].url,
+                lat: event[i].latitude,
+                long: event[i].longitude,
+                id: event[i].id
+            });
         }
+        dispatch(
+            fetchEventsSuccess(events)
+        )
     })
     .catch(function(error) {
         return dispatch(
