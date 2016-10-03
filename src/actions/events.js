@@ -19,21 +19,7 @@ let fetchEvents = function(events) {
             return response.json();
         })
     .then(function(data) {
-        let eventArray = data.events.event;
-        let i;
-        let events = [];
-        for(i = 0; i < eventArray.length; i++) {
-            let event = eventArray;
-            events = events.concat({
-                title: event[i].title,
-                venue: event[i].venue_name,
-                venueUrl: event[i].venue_url,
-                site: event[i].url,
-                lat: event[i].latitude,
-                long: event[i].longitude,
-                id: event[i].id
-            });
-        }
+        let events = data.events.event;
         dispatch(
             fetchEventsSuccess(events)
         )

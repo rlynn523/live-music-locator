@@ -23094,10 +23094,10 @@
 	
 	    switch (action.type) {
 	        case _events2.default.FETCH_EVENTS_SUCCESS:
-	            console.log(action);
 	            var Events = Object.assign({}, state, {
 	                events: action
 	            });
+	            console.log('reducer', Events);
 	            return Events;
 	    }
 	    return state;
@@ -23133,21 +23133,7 @@
 	            }
 	            return response.json();
 	        }).then(function (data) {
-	            var eventArray = data.events.event;
-	            var i = void 0;
-	            var events = [];
-	            for (i = 0; i < eventArray.length; i++) {
-	                var event = eventArray;
-	                events = events.concat({
-	                    title: event[i].title,
-	                    venue: event[i].venue_name,
-	                    venueUrl: event[i].venue_url,
-	                    site: event[i].url,
-	                    lat: event[i].latitude,
-	                    long: event[i].longitude,
-	                    id: event[i].id
-	                });
-	            }
+	            var events = data.events.event;
 	            dispatch(fetchEventsSuccess(events));
 	        }).catch(function (error) {
 	            return dispatch(console.log(error));
@@ -23664,25 +23650,33 @@
 	    _createClass(Search, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            this.props.dispatch(_events2.default.fetchEvents(this.props.title, this.props.venue, this.props.venueUrl, this.props.sites, this.props.lat, this.props.long, this.props.id));
+	            this.props.dispatch(_events2.default.fetchEvents());
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
+	            if (this.props.events.events !== undefined) {
+	                var events = this.props.events.events.map(function (event) {
+	                    return _react2.default.createElement(
+	                        'li',
+	                        { key: event.id },
+	                        event.title,
+	                        ' at ',
+	                        event.venue_name
+	                    );
+	                });
+	                return _react2.default.createElement(
+	                    'ul',
+	                    null,
+	                    events
+	                );
+	            } else {
+	                return _react2.default.createElement(
 	                    'h2',
 	                    null,
-	                    this.props.title
-	                ),
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    this.props.venue
-	                )
-	            );
+	                    'Loading...'
+	                );
+	            }
 	        }
 	    }]);
 	
@@ -23691,12 +23685,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state, props) {
 	    return {
-	        title: state.title,
-	        venue: state.venue,
-	        venueUrl: state.venueUrl,
-	        site: state.site,
-	        lat: state.lat,
-	        long: state.long
+	        events: state.events
 	    };
 	};
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(Search);

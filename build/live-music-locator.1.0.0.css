@@ -8,4 +8,8 @@ html {
 *:after {
   box-sizing: inherit;
 }
+#map {
+  height: 400px;
+  width: 100%;
+}
 /*# sourceMappingURL=live-music-locator.1.0.0.css.map */
